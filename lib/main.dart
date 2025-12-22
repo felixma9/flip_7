@@ -47,8 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final List<PlayingCard> drawnCards = context.watch<CardManager>().drawnCards;
-    final int accumulatedPoints = context.watch<GameManager>().accumulatedPoints;
-
+    final int accumulatedPoints = context.watch<CardManager>().pointsInHand;
+    final int totalPoints = context.watch<GameManager>().totalPoints;
 
     return Scaffold(
       appBar: AppBar(
@@ -75,12 +75,28 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             // Accumulated points
-            Text(accumulatedPoints.toString()),
+            Text('Accumulated points: ${accumulatedPoints.toString()}'),
+
+            // Total points
+            Text('Total points: ${totalPoints.toString()}'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<GameManager>().drawCard(),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // End turn button
+          FloatingActionButton(
+            onPressed: () => context.read<GameManager>().endTurn(),
+            child: Text("End Turn"),
+          ),
+
+          // Draw card button
+          FloatingActionButton(
+            onPressed: () => context.read<GameManager>().drawCard(),
+            child: Text("Draw Card"),
+          ),
+        ],
       ),
     );
   }

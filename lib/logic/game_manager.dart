@@ -1,36 +1,25 @@
 import 'package:flip_7/logic/card_manager.dart';
-import 'package:flip_7/models/card_model.dart';
 import 'package:flutter/material.dart';
 
 class GameManager extends ChangeNotifier {
   final CardManager _cardManager;
-  
   int totalPoints = 0;
-  int accumulatedPoints = 0;
 
   GameManager(this._cardManager);
 
   void drawCard() {
-    PlayingCard? drawnCard = _cardManager.currentCard;
-    if (drawnCard != null) {
-      // If this card is a duplicate, end the turn
-      if (_cardManager.isCurrentCardDuplicate) {
-        _cardManager.discardCurrent();
-        endTurn();
-      } else {
-        // If unique, add to accumulated points, card to drawn cards
-        _cardManager.addCurrentCardToHand();
-        accumulatedPoints += drawnCard.value;
-      }
-    }
-
+    if (_cardManager.isCurrentCardDuplicate) endTurn();
     _cardManager.drawCard();
     notifyListeners();
+    return;
   }
 
   void endTurn() {
-    totalPoints += accumulatedPoints;
-    accumulatedPoints = 0;
+    if (!_cardManager.isCurrentCardDuplicate) totalPoints += _cardManager.pointsInHand;
+    
     _cardManager.discardHand();
+    _cardManager.discardCurrent();
+    notifyListeners();
+    return;
   }
 }

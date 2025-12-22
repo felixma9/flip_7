@@ -23,6 +23,14 @@ class CardManager extends ChangeNotifier {
   late final List<PlayingCard> _deck;
   final List<PlayingCard> drawnCards = [];
   final List<PlayingCard> discardPile = [];
+
+  int get pointsInHand {
+    int points = 0;
+    for (PlayingCard card in drawnCards) {
+      points += card.value;
+    }
+    return points;
+  }
   
   PlayingCard? currentCard;
 
@@ -49,28 +57,23 @@ class CardManager extends ChangeNotifier {
 
   // Invariant: after drawing, currentCard should NOT be null
   void drawCard() {
-    if (_deck.isNotEmpty) {
-      currentCard = _deck.removeLast();
-      notifyListeners();
-      return;
-    }
-  }
+    if (_deck.isEmpty) return;
 
-  void addCurrentCardToHand() {
-    if (currentCard != null) {
-      drawnCards.add(currentCard!);
-      notifyListeners();
-      return;
-    }
+    // If a card was previously drawn, add that card to hand first
+    if (currentCard != null) drawnCards.add(currentCard!);
+
+    currentCard = _deck.removeLast();
+    notifyListeners();
+    return;
   }
 
   void discardCurrent() {
-    if (currentCard != null) {
-      discardPile.add(currentCard!);
-      currentCard = null;
-      notifyListeners();
-      return;
-    }
+    if (currentCard == null) return;
+    
+    discardPile.add(currentCard!);
+    currentCard = null;
+    notifyListeners();
+    return;
   }
 
   void discardHand() {
