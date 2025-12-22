@@ -15,8 +15,11 @@ class GameManager extends ChangeNotifier {
   }
 
   void endTurn() {
-    if (!_cardManager.isCurrentCardDuplicate) totalPoints += _cardManager.pointsInHand;
-    
+    if (!_cardManager.isCurrentCardDuplicate) {
+      _cardManager.addCurrentCardToHand();
+      totalPoints += _cardManager.pointsInHand;
+    }
+
     _cardManager.discardHand();
     _cardManager.discardCurrent();
     notifyListeners();

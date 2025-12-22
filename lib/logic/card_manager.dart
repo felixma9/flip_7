@@ -67,6 +67,14 @@ class CardManager extends ChangeNotifier {
     return;
   }
 
+  void addCurrentCardToHand() {
+    if (currentCard == null) return;
+
+    drawnCards.add(currentCard!);
+    notifyListeners();
+    return;
+  }
+
   void discardCurrent() {
     if (currentCard == null) return;
     
