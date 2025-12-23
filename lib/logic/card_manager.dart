@@ -3,26 +3,30 @@
 import 'package:flip_7/models/card_model.dart';
 import 'package:flutter/foundation.dart';
 
-const Map<int, int> deckDefinition = {
-  0: 1,
-  1: 1,
-  2: 2,
-  3: 3,
-  4: 4,
-  5: 5,
-  6: 6,
-  7: 7,
-  8: 8,
-  9: 9,
-  10: 10,
-  11: 11,
-  12: 12,
+const Map<String, ({int value, int count})> deckDefinition = {
+  'zero':   (value: 0,  count: 1),
+  'one':    (value: 1,  count: 1),
+  'two':    (value: 2,  count: 2),
+  'three':  (value: 3,  count: 3),
+  'four':   (value: 4,  count: 4),
+  'five':   (value: 5,  count: 5),
+  'six':    (value: 6,  count: 6),
+  'seven':  (value: 7,  count: 7),
+  'eight':  (value: 8,  count: 8),
+  'nine':   (value: 9,  count: 9),
+  'ten':    (value: 10, count: 10),
+  'eleven': (value: 11, count: 11),
+  'twelve': (value: 12, count: 12),
 };
 
 class CardManager extends ChangeNotifier {
   late final List<PlayingCard> deck;
   List<PlayingCard> drawnCards = [];
   List<PlayingCard> discardPile = [];
+
+  // Invariant: currentCard is NOT part of the player's hand on first
+  //            draw, it enters the hand if it's valid and on next draw
+  PlayingCard? currentCard;
 
   int get pointsInHand {
     int points = 0;
@@ -34,11 +38,15 @@ class CardManager extends ChangeNotifier {
     return points + currentCardPoints;
   }
   
-  PlayingCard? currentCard;
-
   bool get isCurrentCardDuplicate {
     if (currentCard == null) return false;
     return drawnCards.any((card) => card.value == currentCard!.value);
+  }
+
+  int? get duplicateValue {
+    if (currentCard == null) return null;
+    return drawnCards.any((card) => card.value == currentCard!.value) 
+      ? currentCard!.value : null;
   }
 
   CardManager() {
@@ -47,9 +55,10 @@ class CardManager extends ChangeNotifier {
 
   void resetDeck() {
     deck = deckDefinition.entries.expand<PlayingCard>((entry) {
-      final value = entry.key;
-      final count = entry.value;
-      return List.generate(count, (_) => PlayingCard(value: value));
+      final String id = entry.key;
+      final (:value, :count) = entry.value;
+
+      return List.generate(count, (i) => PlayingCard(value: value, id: '$id-$i'));
     }).toList();
 
     discardPile = [];
@@ -76,14 +85,6 @@ class CardManager extends ChangeNotifier {
     notifyListeners();
     return;
   }
-
-  // void addCurrentCardToHand() {
-  //   if (currentCard == null) return;
-
-  //   drawnCards = [...drawnCards, currentCard!];
-  //   notifyListeners();
-  //   return;
-  // }
 
   void discardCurrent() {
     if (currentCard == null) return;
