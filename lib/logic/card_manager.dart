@@ -29,7 +29,9 @@ class CardManager extends ChangeNotifier {
     for (PlayingCard card in drawnCards) {
       points += card.value;
     }
-    return points;
+
+    int currentCardPoints = currentCard?.value ?? 0;
+    return points + currentCardPoints;
   }
   
   PlayingCard? currentCard;
@@ -74,6 +76,14 @@ class CardManager extends ChangeNotifier {
     notifyListeners();
     return;
   }
+
+  // void addCurrentCardToHand() {
+  //   if (currentCard == null) return;
+
+  //   drawnCards = [...drawnCards, currentCard!];
+  //   notifyListeners();
+  //   return;
+  // }
 
   void discardCurrent() {
     if (currentCard == null) return;

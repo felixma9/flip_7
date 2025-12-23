@@ -48,9 +48,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    final List<PlayingCard> drawnCards = context.watch<CardManager>().drawnCards;
-    final int accumulatedPoints = context.watch<CardManager>().pointsInHand;
-    final int totalPoints = context.watch<GameManager>().totalPoints;
+    final int accumulatedPoints = context.select<CardManager, int>((cm) => cm.pointsInHand);
+    final int totalPoints = context.select<GameManager, int>((gm) => gm.totalPoints);
 
     return Scaffold(
       appBar: AppBar(
