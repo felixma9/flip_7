@@ -14,6 +14,7 @@ class PlayAreaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<PlayingCard> drawnCards = context.select<CardManager, List<PlayingCard>>((cm) => cm.drawnCards);
+    final PlayingCard? currentCard = context.select<CardManager, PlayingCard?>((cm) => cm.currentCard);
 
     return DragTarget<PlayingCard>(
       onWillAcceptWithDetails: (details) => true,
@@ -32,8 +33,12 @@ class PlayAreaWidget extends StatelessWidget {
                 ...drawnCards.map((card) {
                   return CardDisplayWidget(card: card);
                 }),
-              ],)
+
+                if (currentCard != null)
+                  CardDisplayWidget(card: currentCard),
+              ],
             ),
+          ),
         )
     );
   }
