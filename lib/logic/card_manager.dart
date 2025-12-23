@@ -21,8 +21,8 @@ const Map<int, int> deckDefinition = {
 
 class CardManager extends ChangeNotifier {
   late final List<PlayingCard> deck;
-  final List<PlayingCard> drawnCards = [];
-  final List<PlayingCard> discardPile = [];
+  List<PlayingCard> drawnCards = [];
+  List<PlayingCard> discardPile = [];
 
   int get pointsInHand {
     int points = 0;
@@ -50,7 +50,7 @@ class CardManager extends ChangeNotifier {
       return List.generate(count, (_) => PlayingCard(value: value));
     }).toList();
 
-    discardPile.clear();
+    discardPile = [];
 
     deck.shuffle();
   }
@@ -60,7 +60,7 @@ class CardManager extends ChangeNotifier {
     if (deck.isEmpty) return;
 
     // If a card was previously drawn, add that card to hand first
-    if (currentCard != null) drawnCards.add(currentCard!);
+    if (currentCard != null) drawnCards = [...drawnCards, currentCard!];
 
     currentCard = deck.removeLast();
     notifyListeners();
@@ -70,7 +70,7 @@ class CardManager extends ChangeNotifier {
   void addCurrentCardToHand() {
     if (currentCard == null) return;
 
-    drawnCards.add(currentCard!);
+    drawnCards = [...drawnCards, currentCard!];
     notifyListeners();
     return;
   }
@@ -78,15 +78,15 @@ class CardManager extends ChangeNotifier {
   void discardCurrent() {
     if (currentCard == null) return;
     
-    discardPile.add(currentCard!);
+    discardPile = [...discardPile, currentCard!];
     currentCard = null;
     notifyListeners();
     return;
   }
 
   void discardHand() {
-    discardPile.addAll(drawnCards);
-    drawnCards.clear();
+    discardPile = [...discardPile, ...drawnCards];
+    drawnCards = [];
     notifyListeners();
     return;
   }

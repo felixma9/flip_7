@@ -64,21 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
             // Deck
             DeckWidget(),
 
-            // Curent card
-            CardDisplayWidget(
-              card: context.watch<CardManager>().currentCard
-            ),
-
-            // Discard pile
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(children: [
-                ...drawnCards.map((card) {
-                  return CardDisplayWidget(card: card);
-                }),
-              ],)
-            ),
-
             // Accumulated points
             Text('Accumulated points: ${accumulatedPoints.toString()}'),
 
