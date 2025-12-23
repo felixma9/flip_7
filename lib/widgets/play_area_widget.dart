@@ -18,10 +18,8 @@ class PlayAreaWidget extends StatelessWidget {
 
     return DragTarget<PlayingCard>(
       onWillAcceptWithDetails: (details) => true,
-      onAcceptWithDetails: (details) {
-        context.read<GameManager>().drawCard();
-      },
-      builder:(context, candidateData, rejectedData) => 
+      onAcceptWithDetails: (details) => context.read<GameManager>().onDrawCard(),
+      builder: (context, candidateData, rejectedData) => 
         Container(
             width: 300,
             height: 200,

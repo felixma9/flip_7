@@ -3,7 +3,6 @@
 // play area to draw a card
 
 import 'package:flip_7/logic/card_manager.dart';
-import 'package:flip_7/models/card_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,18 +11,18 @@ class DeckWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlayingCard? card = context.watch<CardManager>().currentCard;
+    final int deckSize = context.select<CardManager, int>((cm) => cm.deck.length);
 
-    if (card == null) return const Text("No card drawn");
+    if (deckSize == 0) return const Text('Deck empty');
 
-    return Draggable<PlayingCard>(
-      data: card,
+    return Draggable(
+      data: 'dummy data',
       feedback: Text(
-          "🂠",
+          '🂠',
           style: TextStyle(fontSize: 64),
         ),
       child: Text(
-        "🂠",
+        '$deckSize',
         style: TextStyle(fontSize: 64),
       ),
     );

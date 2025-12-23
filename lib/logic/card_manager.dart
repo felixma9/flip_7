@@ -20,7 +20,7 @@ const Map<String, ({int value, int count})> deckDefinition = {
 };
 
 class CardManager extends ChangeNotifier {
-  late final List<PlayingCard> deck;
+  List<PlayingCard> deck = [];
   List<PlayingCard> drawnCards = [];
   List<PlayingCard> discardPile = [];
 

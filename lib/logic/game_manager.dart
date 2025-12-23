@@ -23,13 +23,22 @@ class GameManager extends ChangeNotifier {
     return TurnResult.continueTurn;
   }
 
-  void drawCard() {
+  void onDrawCard() {
     if (turnResult != TurnResult.continueTurn) {
       endTurn();
       return;
     }
 
     _cardManager.drawCard();
+    notifyListeners();
+    return;
+  }
+
+  void onRestartRound() {
+    totalPoints = 0;
+    _cardManager.resetDeck();
+    _cardManager.discardHand();
+    _cardManager.discardCurrent();
     notifyListeners();
     return;
   }

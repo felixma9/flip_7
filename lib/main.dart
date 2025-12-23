@@ -78,13 +78,19 @@ class _MyHomePageState extends State<MyHomePage> {
           // End turn button
           FloatingActionButton(
             onPressed: () => context.read<GameManager>().endTurn(),
-            child: Text("End Turn"),
+            child: Text('End Turn'),
           ),
 
           // Draw card button
           FloatingActionButton(
-            onPressed: () => context.read<GameManager>().drawCard(),
-            child: Text("Draw Card"),
+            onPressed: () => context.read<GameManager>().onDrawCard(),
+            child: Text('Draw Card'),
+          ),
+
+          // Reset button
+          FloatingActionButton(
+            onPressed: () => context.read<GameManager>().onRestartRound(),
+            child: Text('Restart'),
           ),
         ],
       ),

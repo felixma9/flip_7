@@ -13,7 +13,7 @@ class CardDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (card == null) return Text("Null card");
+    if (card == null) return Text('Null card');
     final bool isDuplicate = context.select<CardManager, bool>((cm) => cm.duplicateValue == card!.value);
 
     return Text(
