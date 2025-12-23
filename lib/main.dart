@@ -2,6 +2,8 @@ import 'package:flip_7/logic/card_manager.dart';
 import 'package:flip_7/logic/game_manager.dart';
 import 'package:flip_7/models/card_model.dart';
 import 'package:flip_7/widgets/card_display_widget.dart';
+import 'package:flip_7/widgets/deck_widget.dart';
+import 'package:flip_7/widgets/play_area_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,6 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Deck
+            DeckWidget(),
+
             // Curent card
             CardDisplayWidget(
               card: context.watch<CardManager>().currentCard
@@ -79,6 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
             // Total points
             Text('Total points: ${totalPoints.toString()}'),
+
+            // Play area
+            PlayAreaWidget(),
           ],
         ),
       ),

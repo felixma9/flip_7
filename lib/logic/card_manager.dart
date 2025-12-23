@@ -20,7 +20,7 @@ const Map<int, int> deckDefinition = {
 };
 
 class CardManager extends ChangeNotifier {
-  late final List<PlayingCard> _deck;
+  late final List<PlayingCard> deck;
   final List<PlayingCard> drawnCards = [];
   final List<PlayingCard> discardPile = [];
 
@@ -44,7 +44,7 @@ class CardManager extends ChangeNotifier {
   }
 
   void resetDeck() {
-    _deck = deckDefinition.entries.expand<PlayingCard>((entry) {
+    deck = deckDefinition.entries.expand<PlayingCard>((entry) {
       final value = entry.key;
       final count = entry.value;
       return List.generate(count, (_) => PlayingCard(value: value));
@@ -52,17 +52,17 @@ class CardManager extends ChangeNotifier {
 
     discardPile.clear();
 
-    _deck.shuffle();
+    deck.shuffle();
   }
 
   // Invariant: after drawing, currentCard should NOT be null
   void drawCard() {
-    if (_deck.isEmpty) return;
+    if (deck.isEmpty) return;
 
     // If a card was previously drawn, add that card to hand first
     if (currentCard != null) drawnCards.add(currentCard!);
 
-    currentCard = _deck.removeLast();
+    currentCard = deck.removeLast();
     notifyListeners();
     return;
   }
