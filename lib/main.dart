@@ -1,6 +1,9 @@
 import 'package:flip_7/logic/card_manager.dart';
+import 'package:flip_7/logic/enemy_manager.dart';
 import 'package:flip_7/logic/game_manager.dart';
+import 'package:flip_7/models/enemy_model.dart';
 import 'package:flip_7/widgets/deck_widget.dart';
+import 'package:flip_7/widgets/enemy_display_widget.dart';
 import 'package:flip_7/widgets/play_area_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,9 +13,10 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CardManager()),
-        ChangeNotifierProxyProvider<CardManager, GameManager>(
-          create: (context) => GameManager(context.read<CardManager>()),
-          update: (_, cardManager, gameManager) => gameManager ?? GameManager(cardManager)
+        ChangeNotifierProvider(create: (_) => EnemyManager()),
+        ChangeNotifierProxyProvider2<CardManager, EnemyManager, GameManager>(
+          create: (context) => GameManager(context.read<CardManager>(), context.read<EnemyManager>()),
+          update:(_, cardManager, enemyManager, gameManager) => gameManager ?? GameManager(cardManager, enemyManager),
         )
       ],
       child: MyApp(),
@@ -48,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final int accumulatedPoints = context.select<CardManager, int>((cm) => cm.pointsInHand);
     final int totalPoints = context.select<GameManager, int>((gm) => gm.totalPoints);
+    final Enemy? currentEnemy = context.select<EnemyManager, Enemy?>((em) => em.currentEnemy);
 
     return Scaffold(
       appBar: AppBar(
@@ -58,6 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Enemy
+            if (currentEnemy != null)
+              EnemyDisplayWidget(enemy: currentEnemy),
+
             // Deck
             DeckWidget(),
 
@@ -77,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           // End turn button
           FloatingActionButton(
-            onPressed: () => context.read<GameManager>().endTurn(),
+            onPressed: () => context.read<GameManager>().onEndTurn(),
             child: Text('End Turn'),
           ),
 

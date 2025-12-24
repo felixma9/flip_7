@@ -8,7 +8,7 @@ class CardDisplayWidget extends StatelessWidget {
 
   const CardDisplayWidget({
     super.key,
-    this.card,
+    required this.card,
   });
 
   @override
