@@ -21,6 +21,7 @@ const Map<String, ({int value, int count})> deckDefinition = {
 
 class CardManager extends ChangeNotifier {
   List<PlayingCard> deck = [];
+  Map<int, int> _cardsCount = {};
   List<PlayingCard> drawnCards = [];
   List<PlayingCard> discardPile = [];
 
@@ -49,20 +50,40 @@ class CardManager extends ChangeNotifier {
       ? currentCard!.value : null;
   }
 
+  double get chanceToBust {
+    if (drawnCards.isEmpty && currentCard == null) return 0.0;
+
+    final Set<int> valuesInHand = {
+      ...drawnCards.map((card) => card.value),
+      if (currentCard != null) currentCard!.value,
+    };
+
+    double percent = 0.0;
+    for (int value in valuesInHand) {
+        final int remaining = _cardsCount[value] ?? 0;
+        percent += remaining / deck.length;
+    }
+
+    return percent * 100.0;
+  }
+
   CardManager() {
     resetDeck();
   }
 
   void resetDeck() {
+    _cardsCount = {};
     deck = deckDefinition.entries.expand<PlayingCard>((entry) {
       final String id = entry.key;
       final (:value, :count) = entry.value;
 
-      return List.generate(count, (i) => PlayingCard(value: value, id: '$id-$i'));
+      return List.generate(count, (i) {
+        _cardsCount[value] = (_cardsCount[value] ?? 0) + 1;
+        return PlayingCard(value: value, id: '$id-$i');
+      });
     }).toList();
 
     discardPile = [];
-
     deck.shuffle();
   }
 
@@ -71,7 +92,10 @@ class CardManager extends ChangeNotifier {
     if (deck.isEmpty) return;
 
     // If a card was previously drawn, add that card to hand first
-    if (currentCard != null) drawnCards = [...drawnCards, currentCard!];
+    if (currentCard != null) {
+      drawnCards = [...drawnCards, currentCard!];
+      _cardsCount[currentCard!.value] = _cardsCount[currentCard!.value]! - 1;
+    }
 
     currentCard = deck.removeLast();
     notifyListeners();

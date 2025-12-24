@@ -53,6 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final int accumulatedPoints = context.select<CardManager, int>((cm) => cm.pointsInHand);
     final int totalPoints = context.select<GameManager, int>((gm) => gm.totalPoints);
     final Enemy? currentEnemy = context.select<EnemyManager, Enemy?>((em) => em.currentEnemy);
+    final double chanceToBust = context.select<CardManager, double>((cm) => cm.chanceToBust);
+    final bool isCurrentCardDuplicate = context.select<CardManager, bool>((cm) => cm.isCurrentCardDuplicate);
 
     return Scaffold(
       appBar: AppBar(
@@ -78,6 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
             // Play area
             PlayAreaWidget(),
+            
+            // Chance to bust
+            if (!isCurrentCardDuplicate) Text('${chanceToBust.toStringAsFixed(2)}% to bust'),
           ],
         ),
       ),
