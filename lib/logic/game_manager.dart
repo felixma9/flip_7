@@ -2,6 +2,13 @@ import 'package:flip_7/logic/card_manager.dart';
 import 'package:flip_7/logic/enemy_manager.dart';
 import 'package:flutter/material.dart';
 
+enum TurnState {
+  player,
+  enemy,
+  resolving,
+  gameOver,
+}
+
 enum TurnResult {
   continueTurn,
   duplicateDrawn,
@@ -12,10 +19,11 @@ class GameManager extends ChangeNotifier {
   final CardManager _cardManager;
   final EnemyManager _enemyManager;
   int totalPoints = 0;
+  TurnState turnState = TurnState.player;
 
-  static const int bankAttackMultiplier = 2;
+  static const double bankAttackMultiplier = 1.2;
   static const int bonusThreshold = 7;
-  static const int bonusMultiplier = 3;
+  static const int bonusMultiplier = 2;
   static const int bustAttackAmount = 10;
 
   GameManager(this._cardManager, this._enemyManager) {
@@ -29,7 +37,14 @@ class GameManager extends ChangeNotifier {
     return TurnResult.continueTurn;
   }
 
+  bool get isPlayerTurn => turnState == TurnState.player;
+  bool get isEnemyTurn  => turnState == TurnState.enemy;
+  bool get isResolving  => turnState == TurnState.resolving;
+  bool get isGameOver   => turnState == TurnState.gameOver;
+
   void onDrawCard() {
+    if (!isPlayerTurn) return;
+
     if (turnResult != TurnResult.continueTurn) {
       onEndTurn();
       return;
@@ -51,17 +66,21 @@ class GameManager extends ChangeNotifier {
   }
 
   void attackFromBank() {
-    _enemyManager.onAttack(totalPoints * bankAttackMultiplier);
+    _enemyManager.takeDamage((totalPoints * bankAttackMultiplier).ceil());
     totalPoints = 0;
     return;
   }
 
   void onEndTurn() {
+    if (!isPlayerTurn) return;
+
     switch (turnResult) {
       case TurnResult.continueTurn:
         // If player has drawn cards, bank points
-        if (_cardManager.drawnCards.isNotEmpty) {
+        if (_cardManager.drawnCards.isNotEmpty || 
+            _cardManager.currentCard != null) {
           totalPoints += _cardManager.pointsInHand;
+          totalPoints += _cardManager.currentCard?.value ?? 0;
         }
 
         // Attack from bank if player ended without drawing
@@ -78,12 +97,25 @@ class GameManager extends ChangeNotifier {
 
       case TurnResult.duplicateDrawn:
         // Busting attacks for minimum amount
-        _enemyManager.onAttack(bustAttackAmount);
+        _enemyManager.takeDamage(bustAttackAmount);
         break;
     }
 
     _cardManager.discardHand();
     _cardManager.discardCurrent();
+    turnState = TurnState.enemy;
+    notifyListeners();
+
+    startEnemyTurn();
+    return;
+  }
+
+  Future<void> startEnemyTurn() async {
+    if (turnState != TurnState.enemy) return;
+
+    await _enemyManager.takeTurn();
+
+    turnState = TurnState.player;
     notifyListeners();
     return;
   }

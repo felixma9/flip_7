@@ -4,6 +4,7 @@ import 'package:flip_7/logic/game_manager.dart';
 import 'package:flip_7/models/enemy_model.dart';
 import 'package:flip_7/widgets/deck_widget.dart';
 import 'package:flip_7/widgets/enemy_display_widget.dart';
+import 'package:flip_7/widgets/enemy_play_area_widget.dart';
 import 'package:flip_7/widgets/play_area_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -66,8 +67,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Enemy
-            if (currentEnemy != null)
+            if (currentEnemy != null) 
               EnemyDisplayWidget(enemy: currentEnemy),
+
+            // Enemy cards
+            if (currentEnemy != null)
+              EnemyPlayAreaWidget(),
 
             // Deck
             DeckWidget(),

@@ -2,6 +2,11 @@ import 'dart:math';
 import 'package:flip_7/models/enemy_model.dart';
 import 'package:flutter/material.dart';
 
+typedef EnemyConstructor = Enemy Function();
+final Map<String, EnemyConstructor> enemyMap = {
+  'first-enemy': () => FirstEnemy(),
+};
+
 class EnemyManager extends ChangeNotifier {
   Enemy? currentEnemy;
 
@@ -18,13 +23,20 @@ class EnemyManager extends ChangeNotifier {
   EnemyManager();
 
   void setCurrentEnemy(String enemyId) {
-    currentEnemy = Enemy(enemyId: enemyId);
+    final constructor = enemyMap[enemyId];
+    if (constructor == null) throw Exception('Unknown enemyId: $enemyId');
+    currentEnemy = constructor();
     notifyListeners();
     return;
   }
 
-  void onAttack(int damage) {
+  void takeDamage(int damage) {
     if (currentEnemy == null) return;
     currentEnemy!.health = currentEnemy!.health - damage;
+  }
+
+  Future<void> takeTurn() async {
+    print("Enemy taking turn");
+    return;
   }
 }
