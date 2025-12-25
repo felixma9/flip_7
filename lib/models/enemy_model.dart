@@ -31,7 +31,6 @@ class FirstEnemy implements Enemy {
   @override List<PlayingCard> deck = deckDefinition.entries.expand<PlayingCard>((entry) {
     final String id = entry.key;
     final (:value, :count) = entry.value;
-
     return List.generate(count, (i) {
       return PlayingCard(value: value, id: '$id-$i');
     });

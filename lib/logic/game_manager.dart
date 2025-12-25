@@ -21,7 +21,7 @@ class GameManager extends ChangeNotifier {
   int totalPoints = 0;
   TurnState turnState = TurnState.player;
 
-  static const double bankAttackMultiplier = 1.2;
+  static const double bankAttackMultiplier = 1.0;
   static const int bonusThreshold = 7;
   static const int bonusMultiplier = 2;
   static const int bustAttackAmount = 10;
@@ -80,7 +80,6 @@ class GameManager extends ChangeNotifier {
         if (_cardManager.drawnCards.isNotEmpty || 
             _cardManager.currentCard != null) {
           totalPoints += _cardManager.pointsInHand;
-          totalPoints += _cardManager.currentCard?.value ?? 0;
         }
 
         // Attack from bank if player ended without drawing

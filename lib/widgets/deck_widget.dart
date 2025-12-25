@@ -11,7 +11,7 @@ class DeckWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int deckSize = context.select<CardManager, int>((cm) => cm.deck.length);
+    final int deckSize = context.select<PlayerCardManager, int>((cm) => cm.deck.length);
 
     if (deckSize == 0) return const Text('Deck empty');
 

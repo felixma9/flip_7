@@ -1,6 +1,7 @@
 import 'package:flip_7/logic/card_manager.dart';
 import 'package:flip_7/logic/enemy_manager.dart';
 import 'package:flip_7/logic/game_manager.dart';
+import 'package:flip_7/models/card_model.dart';
 import 'package:flip_7/models/enemy_model.dart';
 import 'package:flip_7/widgets/deck_widget.dart';
 import 'package:flip_7/widgets/enemy_display_widget.dart';
@@ -13,12 +14,19 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CardManager()),
-        ChangeNotifierProvider(create: (_) => EnemyManager()),
-        ChangeNotifierProxyProvider2<CardManager, EnemyManager, GameManager>(
-          create: (context) => GameManager(context.read<CardManager>(), context.read<EnemyManager>()),
-          update:(_, cardManager, enemyManager, gameManager) => gameManager ?? GameManager(cardManager, enemyManager),
-        )
+        ChangeNotifierProvider(create: (_) => PlayerCardManager(playerDeckDefinition)),
+        ChangeNotifierProvider(create: (_) => EnemyCardManager(playerDeckDefinition)),
+        ChangeNotifierProxyProvider<EnemyCardManager, EnemyManager>(
+          create: (context) => EnemyManager(context.read<EnemyCardManager>()),
+          update: (_, enemyCardManager, enemyManager) {
+            enemyManager!.updateCardManager(enemyCardManager);
+            return enemyManager;
+          },
+        ),
+        ChangeNotifierProvider(create: (context) => GameManager(
+          context.read<PlayerCardManager>(), 
+          context.read<EnemyManager>()
+        )),
       ],
       child: MyApp(),
     )
@@ -51,11 +59,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    final int accumulatedPoints = context.select<CardManager, int>((cm) => cm.pointsInHand);
+    final int accumulatedPoints = context.select<PlayerCardManager, int>((cm) => cm.pointsInHand);
     final int totalPoints = context.select<GameManager, int>((gm) => gm.totalPoints);
     final Enemy? currentEnemy = context.select<EnemyManager, Enemy?>((em) => em.currentEnemy);
-    final double chanceToBust = context.select<CardManager, double>((cm) => cm.chanceToBust);
-    final bool isCurrentCardDuplicate = context.select<CardManager, bool>((cm) => cm.isCurrentCardDuplicate);
+    final double chanceToNotBust = context.select<PlayerCardManager, double>((cm) => cm.chanceToNotBust);
+    final bool isCurrentCardDuplicate = context.select<PlayerCardManager, bool>((cm) => cm.isCurrentCardDuplicate);
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
             PlayAreaWidget(),
             
             // Chance to bust
-            if (!isCurrentCardDuplicate) Text('${chanceToBust.toStringAsFixed(2)}% to bust'),
+            if (!isCurrentCardDuplicate) Text('${chanceToNotBust.toStringAsFixed(2)}% to not bust'),
           ],
         ),
       ),

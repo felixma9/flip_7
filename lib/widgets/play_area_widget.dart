@@ -13,8 +13,8 @@ class PlayAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<PlayingCard> drawnCards = context.select<CardManager, List<PlayingCard>>((cm) => cm.drawnCards);
-    final PlayingCard? currentCard = context.select<CardManager, PlayingCard?>((cm) => cm.currentCard);
+    final List<PlayingCard> drawnCards = context.select<PlayerCardManager, List<PlayingCard>>((cm) => cm.drawnCards);
+    final PlayingCard? currentCard = context.select<PlayerCardManager, PlayingCard?>((cm) => cm.currentCard);
 
     return DragTarget(
       onWillAcceptWithDetails: (_) => true,
