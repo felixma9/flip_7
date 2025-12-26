@@ -29,11 +29,21 @@ class PlayAreaWidget extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(children: [
                 ...drawnCards.map((card) {
-                  return CardDisplayWidget(card: card);
+                  return CardDisplayWidget(
+                    card: card, 
+                    isDuplicate: context.select<PlayerCardManager, bool>(
+                      (cm) => cm.duplicateValue == card.value
+                    ),
+                  );
                 }),
 
                 if (currentCard != null)
-                  CardDisplayWidget(card: currentCard),
+                  CardDisplayWidget(
+                    card: currentCard,
+                    isDuplicate: context.select<PlayerCardManager, bool>(
+                      (cm) => cm.isCurrentCardDuplicate,
+                    ),
+                  ),
               ],
             ),
           ),

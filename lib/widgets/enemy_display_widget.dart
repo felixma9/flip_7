@@ -1,5 +1,7 @@
+import 'package:flip_7/logic/enemy_manager.dart';
 import 'package:flip_7/models/enemy_model.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class EnemyDisplayWidget extends StatelessWidget {
   final Enemy enemy;
@@ -11,10 +13,12 @@ class EnemyDisplayWidget extends StatelessWidget {
 
   @override
   build(BuildContext context) {
+    final int? enemyHealth = context.select<EnemyManager, int?>((em) => em.health);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('${enemy.health}'),
+        if (enemyHealth != null) Text('$enemyHealth'),
       ],
     );
   }

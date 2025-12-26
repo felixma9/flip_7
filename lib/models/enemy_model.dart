@@ -18,16 +18,13 @@ const Map<String, ({int value, int count})> deckDefinition = {
 
 abstract class Enemy {
   String get name;
-  int get health;
-  set health(int newHealth);
+  int get startingHealth;
   List<PlayingCard> get deck;
-
-  void takeTurn();
 }
 
-class FirstEnemy implements Enemy {
+class FirstEnemy extends Enemy {
   @override String name = "First Enemy";
-  @override int health = 200;
+  @override int startingHealth = 200;
   @override List<PlayingCard> deck = deckDefinition.entries.expand<PlayingCard>((entry) {
     final String id = entry.key;
     final (:value, :count) = entry.value;
@@ -35,9 +32,4 @@ class FirstEnemy implements Enemy {
       return PlayingCard(value: value, id: '$id-$i');
     });
   }).toList();
-
-  @override
-  void takeTurn() {
-
-  }
 }

@@ -16,14 +16,14 @@ enum TurnResult {
 }
 
 class GameManager extends ChangeNotifier {
-  final CardManager _cardManager;
+  final CardManager  _cardManager;
   final EnemyManager _enemyManager;
   int totalPoints = 0;
   TurnState turnState = TurnState.player;
 
   static const double bankAttackMultiplier = 1.0;
-  static const int bonusThreshold = 7;
-  static const int bonusMultiplier = 2;
+  static const int bonusThreshold   = 7;
+  static const int bonusMultiplier  = 2;
   static const int bustAttackAmount = 10;
 
   GameManager(this._cardManager, this._enemyManager) {
@@ -112,9 +112,14 @@ class GameManager extends ChangeNotifier {
   Future<void> startEnemyTurn() async {
     if (turnState != TurnState.enemy) return;
 
+    _enemyManager.resetHand();
+    
     await _enemyManager.takeTurn();
 
+    print('Enemy ended turn with ${_enemyManager.pointsInHand} points');
+
     turnState = TurnState.player;
+    print("player's turn");
     notifyListeners();
     return;
   }
